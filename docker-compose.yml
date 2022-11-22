@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+
+  mysql:
+    build: ./database/
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=UserDatabase
+      - MYSQL_ROOT_PASSWORD=senha
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 2s
+      retries: 10
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+
+  go-backend:
+    tty: true
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "7000:7000"
+    environment:
+      - JWTSECRET=W3UH328TF674389ynqpqipfop6ih6GYUF67Rgfryeu4745cioyg487GCWQYOY732QYDXB98U42980DJI
+      - HOST=mysql
+      - PORT=3306
+      - USERNAME=root
+      - PASSWORD=senha
+      - DATABASE=UserDatabase
+    volumes:
+      - ./:/usr/src/app/
