@@ -16,9 +16,7 @@ import (
 
 func Router() {
 
-	// TODO: criar documentação
-	// TODO: criar testes
-	// TODO: subir para github
+	// TODO: Create tests
 
 	r := mux.NewRouter()
 
